@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 import Album from './pages/Album';
 import Favorites from './pages/Favorites';
 import Login from './pages/Login';
@@ -13,13 +13,17 @@ class App extends React.Component {
     return (
       <div>
         <BrowserRouter>
-          <Login />
-          <Search />
-          <Album />
-          <Favorites />
-          <Profile />
-          <ProfileEdit />
-          <NotFound />
+          <Route
+            path="/album/:id"
+            render={ (props) => (
+              <Album { ...props } />) }
+          />
+          <Route path="/search" component={ Search } />
+          <Route path="/favorites" component={ Favorites } />
+          <Route path="/profile" component={ Profile } exact />
+          <Route path="/profile/edit" component={ ProfileEdit } exact />
+          <Route path="/" component={ Login } exact />
+          <Route path="/*" component={ NotFound } />
         </BrowserRouter>
       </div>);
   }
