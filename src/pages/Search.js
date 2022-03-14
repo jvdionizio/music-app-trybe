@@ -1,14 +1,20 @@
 import React from 'react';
+import Albuns from '../components/Albuns';
 import Header from '../components/Header';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 class Search extends React.Component {
   constructor() {
     super();
-    // this.handleClick = this.handleClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       artist: '',
+      artistName: '',
       btnDisable: true,
+      load: false,
+      albuns: [],
+      clicked: false,
     };
   }
 
@@ -20,19 +26,22 @@ class Search extends React.Component {
     }, this.validate);
   }
 
-  // handleClick(event) {
-  //   const { name } = this.state;
-  //   event.preventDefault();
-  //   this.setState({
-  //     load: true,
-  //   }, async () => {
-  //     await userApi.createUser({ name });
-  //     this.setState({
-  //       load: false,
-  //       logged: true,
-  //     });
-  //   });
-  // }
+  handleClick(event) {
+    const { artist } = this.state;
+    event.preventDefault();
+    this.setState({
+      load: true,
+      clicked: true,
+      artistName: artist,
+    }, async () => {
+      const albuns = await searchAlbumsAPI(artist);
+      this.setState({
+        load: false,
+        albuns,
+        artist: '',
+      });
+    });
+  }
 
   validate = () => {
     const artistLength = 2;
@@ -47,7 +56,7 @@ class Search extends React.Component {
   }
 
   render() {
-    const { artist, btnDisable } = this.state;
+    const { artist, btnDisable, load, albuns, clicked, artistName } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
@@ -58,15 +67,23 @@ class Search extends React.Component {
             data-testid="search-artist-input"
             value={ artist }
             onChange={ this.handleChange }
+            placeholder="Nome do Artista"
           />
           <button
             type="submit"
             data-testid="search-artist-button"
             disabled={ btnDisable }
+            onClick={ this.handleClick }
           >
             Pesquisar
           </button>
         </form>
+        {clicked && <Albuns
+          load={ load }
+          albuns={ albuns }
+          artist={ artistName }
+          { ...this.props }
+        />}
       </div>
     );
   }
