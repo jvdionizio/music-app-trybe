@@ -30,12 +30,14 @@ class MusicCard extends React.Component {
     }
 
     removeFavorite = () => {
+      const { recall } = this.props;
       const { musicObj } = this.props;
       this.setState({
         load: true,
       });
       favoriteApi.removeSong(musicObj).then(() => {
         this.setState({ load: false });
+        recall();
       });
     }
 
@@ -83,8 +85,10 @@ class MusicCard extends React.Component {
               {' '}
               .
             </audio>
-            <label htmlFor="favorite">
+            <label htmlFor={ `checkbox-music-${trackId}` }>
+              {'Favorita '}
               <input
+                id={ `checkbox-music-${trackId}` }
                 name="favorite"
                 data-testid={ `checkbox-music-${trackId}` }
                 onChange={ this.handleClick }
