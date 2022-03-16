@@ -50,7 +50,7 @@ class Header extends React.Component {
                    to="/profile"
                    data-testid="link-to-profile"
                  >
-                   Pesquisa
+                   Perfil
                  </Link>
                </>
              )

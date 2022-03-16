@@ -10,6 +10,9 @@ class Login extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       name: '',
+      email: '',
+      image: '',
+      description: '',
       btnDisable: true,
       load: false,
       logged: false,
@@ -17,20 +20,19 @@ class Login extends React.Component {
   }
 
   handleChange({ target }) {
-    const { name } = target;
-    const { value } = target;
+    const { name, value } = target;
     this.setState({
       [name]: value,
     }, this.validate);
   }
 
   handleClick(event) {
-    const { name } = this.state;
+    const { name, email, description, image } = this.state;
     event.preventDefault();
     this.setState({
       load: true,
     }, async () => {
-      await userApi.createUser({ name });
+      await userApi.createUser({ name, email, image, description });
       this.setState({
         load: false,
         logged: true,
@@ -53,6 +55,9 @@ class Login extends React.Component {
   render() {
     const {
       name,
+      email,
+      image,
+      description,
       btnDisable,
       load,
       logged,
@@ -69,9 +74,35 @@ class Login extends React.Component {
                   name="name"
                   type="text"
                   data-testid="login-name-input"
+                  placeholder="Seu Nome"
                   value={ name }
                   onChange={ this.handleChange }
                 />
+                <br />
+                <input
+                  name="email"
+                  type="text"
+                  placeholder="Seu Email"
+                  value={ email }
+                  onChange={ this.handleChange }
+                />
+                <br />
+                <input
+                  name="image"
+                  type="text"
+                  placeholder="Foto de Perfil"
+                  value={ image }
+                  onChange={ this.handleChange }
+                />
+                <br />
+                <input
+                  name="description"
+                  type="text"
+                  placeholder="Descrição"
+                  value={ description }
+                  onChange={ this.handleChange }
+                />
+                <br />
                 <button
                   type="submit"
                   disabled={ btnDisable }
