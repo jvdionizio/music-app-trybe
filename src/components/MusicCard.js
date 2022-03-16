@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { addSong } from '../services/favoriteSongsAPI';
+import * as favoriteApi from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 class MusicCard extends React.Component {
@@ -12,21 +12,43 @@ class MusicCard extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { isFavorite } = this.props;
+    this.setState({
+      favorite: isFavorite,
+    });
+  }
+
     addFavorite = () => {
       const { musicObj } = this.props;
       this.setState({
         load: true,
       });
-      addSong(musicObj).then(() => {
+      favoriteApi.addSong(musicObj).then(() => {
         this.setState({ load: false });
       });
+    }
+
+    removeFavorite = () => {
+      const { musicObj } = this.props;
+      this.setState({
+        load: true,
+      });
+      favoriteApi.removeSong(musicObj).then(() => {
+        this.setState({ load: false });
+      });
+    }
+
+    verifyChecked = () => {
+      const { favorite } = this.state;
+      return favorite ? this.removeFavorite() : this.addFavorite();
     }
 
     handleClick = ({ target }) => {
       const { name, checked } = target;
       this.setState({
         [name]: checked,
-      }, this.addFavorite);
+      }, this.verifyChecked());
     }
 
     render() {

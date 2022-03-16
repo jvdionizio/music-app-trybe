@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import * as musicsAPI from '../services/musicsAPI';
+import * as favoritesAPI from '../services/favoriteSongsAPI';
 import MusicCard from '../components/MusicCard';
 import Loading from '../components/Loading';
 
@@ -10,12 +11,14 @@ class Album extends React.Component {
     super();
     this.state = {
       musics: [],
+      favoriteSongs: [],
       load: true,
     };
   }
 
   componentDidMount() {
     this.albumMusics();
+    this.gettingFavorites();
   }
 
   albumMusics = async () => {
@@ -23,8 +26,22 @@ class Album extends React.Component {
     const musics = await musicsAPI.default(id);
     this.setState({
       musics,
+    });
+  }
+
+  // me baseie no código do Jonathan Reis para fazer a verificação dos favoritos
+
+  gettingFavorites = async () => {
+    const favoriteSongs = await favoritesAPI.getFavoriteSongs();
+    this.setState({
+      favoriteSongs,
       load: false,
     });
+  }
+
+  compareFavorite = (trackId) => {
+    const { favoriteSongs } = this.state;
+    return favoriteSongs.some((music) => music.trackId === trackId);
   }
 
   render() {
@@ -34,7 +51,7 @@ class Album extends React.Component {
         <Header />
         {
           load ? <Loading /> : (
-            musics.map((music) => (
+            musics.map((music, index) => (
               <MusicCard
                 musicObj={ music }
                 trackId={ music.trackId }
@@ -43,7 +60,8 @@ class Album extends React.Component {
                 artistName={ music.artistName }
                 trackName={ music.trackName }
                 previewUrl={ music.previewUrl }
-                key={ music.trackName }
+                isFavorite={ this.compareFavorite(music.trackId) }
+                key={ index }
               />
             ))
           )
