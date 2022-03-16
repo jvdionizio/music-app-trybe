@@ -37,7 +37,9 @@ class MusicCard extends React.Component {
       });
       favoriteApi.removeSong(musicObj).then(() => {
         this.setState({ load: false });
-        recall();
+        if (recall) {
+          recall();
+        }
       });
     }
 
